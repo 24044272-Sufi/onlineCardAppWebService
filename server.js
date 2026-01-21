@@ -42,6 +42,43 @@ app.post('/addcard', async (req, res) => {
     }
 })
 
+app.delete('/deletecard/:id', async (req, res) => {
+const {id} = req.params
+    try {
+        let connection = await mysql.createConnection(dbConfig)
+        const [result] = await connection.execute('DELETE FROM defaultdb.cards WHERE id = ?', [id])
+        
+        if (result.affectedRows === 0) {
+            res.status(404).json({message: `Card with id ${id} not found`})
+        } else {
+            res.status(200).json({message: `Card with id ${id} deleted successfully`})
+        }
+    }
+    catch(err) {
+        console.error(err);
+        res.status(500).json({message: "Server error - could not delete card with id " + id})
+    }
+})
+
+app.put('/updatecard/:id', async (req, res) => {
+    const {id} = req.params
+    const {card_name, card_pic} = req.body
+    try {
+        let connection = await mysql.createConnection(dbConfig)
+        const [result] = await connection.execute('UPDATE defaultdb.cards SET card_name = ?, card_pic = ? WHERE id = ?', [card_name, card_pic, id])
+        
+        if (result.affectedRows === 0) {
+            res.status(404).json({message: `Card with id ${id} not found`})
+        } else {
+            res.status(200).json({message: `Card ${card_name} updated successfully`})
+        }
+    }
+    catch(err) {
+        console.error(err);
+        res.status(500).json({message: "Server error - could not update card with id " + id})
+    }
+})
+
 
 app.listen(port, () => {
     console.log("Server running on port", port)
