@@ -17,6 +17,31 @@ const dbConfig = {
 const app = express()
 app.use(express.json())
 
+const cors = require("cors");
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://c219_problemstatement.vercel.app",
+  // "https://YOUR-frontend.onrender.com"
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (Postman/server-to-server)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: false,
+  })
+);
+
 app.get('/allcards', async (req, res) => {
     try {
         let connection = await mysql.createConnection(dbConfig)
