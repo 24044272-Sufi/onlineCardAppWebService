@@ -105,7 +105,7 @@ app.post('/addcard', requireAuth, async (req, res) => {
     }
 })
 
-app.delete('/deletecard/:id', async (req, res) => {
+app.delete('/deletecard/:id', requireAuth, async (req, res) => {
 const {id} = req.params
     try {
         let connection = await mysql.createConnection(dbConfig)
@@ -123,7 +123,7 @@ const {id} = req.params
     }
 })
 
-app.put('/updatecard/:id', async (req, res) => {
+app.put('/updatecard/:id', requireAuth, async (req, res) => {
     const {id} = req.params
     const {card_name, card_pic} = req.body
     try {
